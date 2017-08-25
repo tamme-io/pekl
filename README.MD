@@ -1,6 +1,8 @@
 # PEKL
 ## Yiddish: Package
 
+[ ![Codeship Status for tamme-io/pekl](https://app.codeship.com/projects/564563c0-6b79-0135-9771-7e9523f697c6/status?branch=deployment)](https://app.codeship.com/projects/242148)
+
 
 This package is designed for AWS Lambda invocations and responses.
 
