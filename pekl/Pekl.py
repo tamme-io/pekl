@@ -60,7 +60,7 @@ class Pekl(object):
     def invoke(self, function_name, body, region_name=None):
         json_string = json.dumps(body)
         size = sys.getsizeof(json_string)
-        if size > 5000000:
+        if size > 100000:
             random_key = self.writeToBucket(json_string)
             json_string = json.dumps({
                 "pekl_bucket_name" : self.bucket_name,
