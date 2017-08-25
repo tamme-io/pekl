@@ -22,6 +22,8 @@ the bucket that you use has appropriate retention policies initiated.
 
 ### Handling Pekl events
 
+
+```python
 import pekl
 
 Pekl = pekl.init("BUCKET_NAME", "REGION")
@@ -31,12 +33,14 @@ def handler(event, context):
   event = Pekl.receive(event)
   response = someFunction(event)
   return Pekl.respond(event)
-
+```
 
 
 
 ### Invoking functions with Pekl
 
+
+```python
 import pekl
 
 Pekl = pekl.init("BUCKET_NAME", "REGION")
@@ -64,3 +68,14 @@ def handler(event, context):
       "some_key" : some_value
     }
   )
+```
+
+
+### Installing Pekl
+
+Pekl is available via PyPi (https://pypi.python.org/pypi/pekl), you can install
+using:
+
+```
+pip install pekl
+```
