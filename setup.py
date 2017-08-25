@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pekl',
-      version='0.03',
+      version='0.3',
       description='An AWS Lambda library for making invocations and responses with large bodies easier.',
       url='https://github.com/tamme-io/pekl',
       author='tamme',
