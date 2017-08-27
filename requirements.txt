@@ -2,6 +2,7 @@ wheel
 twine
 boto3
 pytest
+coverage
 pytest-cov
 pytest-xdist
 pytest-runner
