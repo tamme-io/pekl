@@ -3,3 +3,5 @@ build/
 dist/
 pekl.egg-info/
 *.pyc
+.coverage
+.eggs/
