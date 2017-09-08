@@ -38,7 +38,9 @@ class Pekl(object):
                 return {
                     "error" : str(exception)
                 }
-        return json.loads(event)
+        else:
+            event = json.loads(event)
+        return event
 
 
     def respond(self, event):
