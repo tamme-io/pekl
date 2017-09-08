@@ -39,7 +39,8 @@ class Pekl(object):
                     "error" : str(exception)
                 }
         else:
-            event = json.loads(event)
+            if isinstance(event, str):
+                event = json.loads(event)
         return event
 
 
