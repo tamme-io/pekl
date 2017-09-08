@@ -4,6 +4,7 @@ import os
 import sys
 import time
 from datetime import datetime
+import decimal
 import uuid
 
 class Pekl(object):
@@ -37,11 +38,11 @@ class Pekl(object):
                 return {
                     "error" : str(exception)
                 }
-        return event
+        return json.loads(event)
 
 
     def respond(self, event):
-        json_string = json.dumps(event)
+        json_string = json.dumps(event, cls=DecimalEncoder)
         size = sys.getsizeof(json_string)
         if size > 5000000:
             # This response risks being too big to respond with so we need to
@@ -51,40 +52,40 @@ class Pekl(object):
             return json.dumps({
                 "pekl_bucket_name" : self.bucket_name,
                 "pekl_bucket_key" : random_key
-            })
+            }, cls=DecimalEncoder)
         # if it's not larger than 5 fake MB then we should be returning the
         # json string
         return json_string
 
 
     def invoke(self, function_name, body, region_name=None):
-        json_string = json.dumps(body)
+        json_string = json.dumps(body, cls=DecimalEncoder)
         size = sys.getsizeof(json_string)
         if size > 100000:
             random_key = self.writeToBucket(json_string)
             json_string = json.dumps({
                 "pekl_bucket_name" : self.bucket_name,
                 "pekl_bucket_key" : random_key
-            })
+            }, cls=DecimalEncoder)
         response = self.aws_lambda.invoke(
             FunctionName = function_name,
             InvocationType = "RequestResponse",
             Payload = json_string
         )
-        response_body = respone.get("Payload").read()
+        response_body = response.get("Payload").read()
         return_dict = self.receive(response_body)
         return return_dict
 
 
     def invokeAsync(self, function_name, body, region_name):
-        json_string = json.dumps(body)
+        json_string = json.dumps(body, cls=DecimalEncoder)
         size = sys.getsizeof(json_string)
         if size > 5000000:
             random_key = self.writeToBucket(json_string)
             json_string = json.dumps({
                 "pekl_bucket_name" : self.bucket_name,
                 "pekl_bucket_key" : random_key
-            })
+            }, cls=DecimalEncoder)
         self.aws_lambda.invoke(
             FunctionName = function_name,
             InvocationType = "Event",
@@ -106,3 +107,20 @@ class Pekl(object):
             Body=json_string
         )
         return random_key
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+    # def _iterencode(self, o, markers=None):
+    #     print "encoding this: %s" % str(o)
+    #     if isinstance(o, decimal.Decimal):
+    #         # wanted a simple yield str(o) in the next line,
+    #         # but that would mean a yield on the line with super(...),
+    #         # which wouldn't work (see my comment below), so...
+    #         print o
+    #         return float(str(o) for o in [o])
+        if isinstance(o, datetime):
+            return o.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        return super(DecimalEncoder, self).default(o)
